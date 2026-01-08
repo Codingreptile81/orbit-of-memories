@@ -1,6 +1,6 @@
-import { useRef, useState, useMemo } from 'react';
-import { useFrame, useLoader } from '@react-three/fiber';
-import { TextureLoader, Mesh, Vector3, MathUtils } from 'three';
+import { useRef, useState, useMemo, useEffect } from 'react';
+import { useFrame, useThree } from '@react-three/fiber';
+import { Mesh, Vector3, MathUtils, TextureLoader, Texture } from 'three';
 import { SPHERE_CONFIG } from './config';
 
 interface PhotoMeshProps {
@@ -24,9 +24,31 @@ const PhotoMesh = ({
 }: PhotoMeshProps) => {
   const meshRef = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);
+  const [texture, setTexture] = useState<Texture | null>(null);
+  const { camera } = useThree();
   
-  // Load texture
-  const texture = useLoader(TextureLoader, imageUrl);
+  // Load texture with error handling
+  useEffect(() => {
+    const loader = new TextureLoader();
+    loader.load(
+      imageUrl,
+      (loadedTexture) => {
+        setTexture(loadedTexture);
+      },
+      undefined,
+      (error) => {
+        console.warn(`Failed to load image ${index}, using fallback`);
+        // Create a simple colored fallback
+        setTexture(null);
+      }
+    );
+    
+    return () => {
+      if (texture) {
+        texture.dispose();
+      }
+    };
+  }, [imageUrl, index]);
   
   // Store original position
   const originalPosition = useMemo(() => position.clone(), [position]);
@@ -50,10 +72,8 @@ const PhotoMesh = ({
     const newScale = MathUtils.lerp(currentScale, targetScale, speed);
     meshRef.current.scale.setScalar(newScale);
     
-    // Make focused photo face camera
-    if (isFocused) {
-      meshRef.current.lookAt(state.camera.position);
-    }
+    // Make photo face camera
+    meshRef.current.lookAt(camera.position);
     
     // Update material opacity
     const material = meshRef.current.material as any;
@@ -61,11 +81,14 @@ const PhotoMesh = ({
       material.opacity = MathUtils.lerp(material.opacity, targetOpacity, speed);
     }
   });
+
+  // Generate a color based on index for fallback
+  const fallbackColor = `hsl(${(index * 37) % 360}, 70%, 80%)`;
   
   return (
     <mesh
       ref={meshRef}
-      position={position}
+      position={position.clone()}
       onClick={(e) => {
         e.stopPropagation();
         onClick();
@@ -81,11 +104,11 @@ const PhotoMesh = ({
       }}
     >
       <circleGeometry args={[SPHERE_CONFIG.photoSize / 2, 64]} />
-      <meshBasicMaterial
-        map={texture}
-        transparent
-        opacity={1}
-      />
+      {texture ? (
+        <meshBasicMaterial map={texture} transparent opacity={1} />
+      ) : (
+        <meshBasicMaterial color={fallbackColor} transparent opacity={1} />
+      )}
     </mesh>
   );
 };
