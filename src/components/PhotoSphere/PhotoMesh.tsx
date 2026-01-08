@@ -7,6 +7,7 @@ interface PhotoMeshProps {
   imageUrl: string;
   position: Vector3;
   index: number;
+  size: number;
   isFocused: boolean;
   anyFocused: boolean;
   onClick: () => void;
@@ -16,6 +17,7 @@ const PhotoMesh = ({
   imageUrl,
   position,
   index,
+  size,
   isFocused,
   anyFocused,
   onClick,
@@ -39,8 +41,7 @@ const PhotoMesh = ({
     groupRef.current.lookAt(camera.position);
   });
   
-  const radius = SPHERE_CONFIG.photoSize / 2;
-  const frameWidth = 0.02;
+  const radius = size / 2;
   
   return (
     <group
