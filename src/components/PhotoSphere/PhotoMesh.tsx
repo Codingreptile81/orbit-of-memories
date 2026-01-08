@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useFrame, useThree, useLoader } from '@react-three/fiber';
-import { Mesh, Vector3, MathUtils, TextureLoader } from 'three';
+import { Mesh, Vector3, MathUtils, TextureLoader, SRGBColorSpace } from 'three';
 import { SPHERE_CONFIG } from './config';
 
 interface PhotoMeshProps {
@@ -26,6 +26,15 @@ const PhotoMesh = ({
   
   // Use useLoader for reliable texture loading
   const texture = useLoader(TextureLoader, imageUrl);
+  
+  // Center the texture on the geometry
+  useEffect(() => {
+    if (texture) {
+      texture.colorSpace = SRGBColorSpace;
+      texture.center.set(0.5, 0.5);
+      texture.needsUpdate = true;
+    }
+  }, [texture]);
   
   // Target opacity based on focus state
   const targetOpacity = anyFocused ? SPHERE_CONFIG.unfocusedOpacity : 1;
