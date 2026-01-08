@@ -1,10 +1,26 @@
 // Configuration for the Memory Universe photo sphere
 // Easy to adjust these values to customize the experience
 
+// Dynamically import all images from the photos folder
+const photoModules = import.meta.glob<{ default: string }>(
+  '/src/assets/photos/*.{jpg,jpeg,png,webp,gif}',
+  { eager: true }
+);
+
+// Extract the image URLs and sort them for consistent ordering
+const localPhotos: string[] = Object.keys(photoModules)
+  .sort()
+  .map((key) => photoModules[key].default);
+
+// Minimum number of nodes to display
+const MIN_NODES = 50;
+
+// Calculate actual photo count: at least MIN_NODES, or more if we have more images
+export const getPhotoCount = (): number => {
+  return Math.max(MIN_NODES, localPhotos.length);
+};
+
 export const SPHERE_CONFIG = {
-  // Number of photos to display on the sphere
-  photoCount: 50,
-  
   // Radius of the invisible sphere
   sphereRadius: 5,
   
@@ -24,27 +40,9 @@ export const SPHERE_CONFIG = {
   unfocusedOpacity: 0.7,
 };
 
-// Import photos from src/assets for reliable bundling
-import photo1 from '@/assets/photos/photo1.jpg';
-import photo2 from '@/assets/photos/photo2.jpg';
-import photo3 from '@/assets/photos/photo3.jpg';
-import photo4 from '@/assets/photos/photo4.jpg';
-import photo5 from '@/assets/photos/photo5.jpg';
-import photo6 from '@/assets/photos/photo6.jpg';
-import photo7 from '@/assets/photos/photo7.jpg';
-import photo8 from '@/assets/photos/photo8.jpg';
-
-const localPhotos = [
-  photo1,
-  photo2,
-  photo3,
-  photo4,
-  photo5,
-  photo6,
-  photo7,
-  photo8,
-];
-
 export const getPlaceholderImage = (index: number): string => {
+  if (localPhotos.length === 0) {
+    return '/photos/photo1.jpg'; // Fallback
+  }
   return localPhotos[index % localPhotos.length];
 };
