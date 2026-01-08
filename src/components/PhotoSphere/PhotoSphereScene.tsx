@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo, useEffect } from 'react';
+import { useRef, useState, useMemo, useEffect, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { Vector3, Group } from 'three';
@@ -66,19 +66,21 @@ const PhotoSphereContent = ({ focusedIndex, onPhotoClick }: PhotoSphereContentPr
         maxDistance={15}
       />
       
-      <group ref={groupRef}>
-        {photoPositions.map((position, index) => (
-          <PhotoMesh
-            key={index}
-            imageUrl={photoUrls[index]}
-            position={position}
-            index={index}
-            isFocused={focusedIndex === index}
-            anyFocused={focusedIndex !== null}
-            onClick={() => onPhotoClick(focusedIndex === index ? null : index)}
-          />
-        ))}
-      </group>
+      <Suspense fallback={null}>
+        <group ref={groupRef}>
+          {photoPositions.map((position, index) => (
+            <PhotoMesh
+              key={index}
+              imageUrl={photoUrls[index]}
+              position={position}
+              index={index}
+              isFocused={focusedIndex === index}
+              anyFocused={focusedIndex !== null}
+              onClick={() => onPhotoClick(focusedIndex === index ? null : index)}
+            />
+          ))}
+        </group>
+      </Suspense>
     </>
   );
 };
