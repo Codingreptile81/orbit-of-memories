@@ -3,7 +3,7 @@ import PhotoSphereScene from '@/components/PhotoSphere/PhotoSphereScene';
 const Index = () => {
   return (
     <div className="relative w-full h-screen">
-      <h1 className="absolute top-8 left-1/2 -translate-x-1/2 z-10 text-4xl md:text-6xl font-bold text-white drop-shadow-lg tracking-wide">
+      <h1 className="absolute top-8 left-1/2 -translate-x-1/2 z-10 text-4xl md:text-6xl font-bold text-yellow-300 animate-bounce-glow tracking-wide">
         Happy Birthday! 🎉
       </h1>
       <PhotoSphereScene />
