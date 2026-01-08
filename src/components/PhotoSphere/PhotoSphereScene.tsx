@@ -4,6 +4,7 @@ import { OrbitControls } from '@react-three/drei';
 import { Vector3, Group } from 'three';
 import PhotoMesh from './PhotoMesh';
 import { SPHERE_CONFIG, getPlaceholderImage } from './config';
+import backgroundImage from '@/assets/background.webp';
 
 // Generate evenly distributed points on a sphere using golden spiral
 const generateSpherePoints = (count: number, radius: number): Vector3[] => {
@@ -165,12 +166,15 @@ const PhotoSphereScene = () => {
   };
 
   return (
-    <div className="w-full h-screen bg-white relative overflow-hidden">
+    <div 
+      className="w-full h-screen relative overflow-hidden bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: `url(${backgroundImage})` }}
+    >
       <Canvas
         camera={{ position: [0, 0, 10], fov: 60 }}
         onPointerMissed={handleBackgroundClick}
+        style={{ background: 'transparent' }}
       >
-        <color attach="background" args={['#ffffff']} />
         <ambientLight intensity={1} />
         <PhotoSphereContent
           focusedIndex={focusedIndex}
