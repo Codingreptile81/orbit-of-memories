@@ -3,7 +3,7 @@
 
 export const SPHERE_CONFIG = {
   // Number of photos to display on the sphere
-  photoCount: 36,
+  photoCount: 60,
   
   // Radius of the invisible sphere
   sphereRadius: 5,
