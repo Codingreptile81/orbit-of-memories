@@ -103,7 +103,7 @@ const FocusedPhotoOverlay = ({ imageUrl, onClose }: FocusedPhotoOverlayProps) =>
     >
       {/* Blurred backdrop */}
       <div 
-        className={`absolute inset-0 bg-black/30 backdrop-blur-md transition-opacity duration-500 ${
+        className={`absolute inset-0 bg-black/20 backdrop-blur-sm transition-opacity duration-500 ${
           isVisible ? 'opacity-100' : 'opacity-0'
         }`}
       />
@@ -113,17 +113,17 @@ const FocusedPhotoOverlay = ({ imageUrl, onClose }: FocusedPhotoOverlayProps) =>
         className={`relative transition-all duration-500 ease-out ${
           isVisible 
             ? 'scale-100 opacity-100' 
-            : 'scale-75 opacity-0'
+            : 'scale-50 opacity-0'
         }`}
         onClick={(e) => e.stopPropagation()}
       >
         <img
           src={imageUrl}
           alt="Focused photo"
-          className="max-w-[80vw] max-h-[70vh] w-auto h-auto rounded-3xl shadow-2xl object-cover"
+          className="max-w-[90vw] max-h-[85vh] w-auto h-auto rounded-3xl shadow-2xl object-cover"
           style={{
-            minWidth: '300px',
-            minHeight: '300px',
+            minWidth: '400px',
+            minHeight: '400px',
           }}
         />
         

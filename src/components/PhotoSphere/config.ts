@@ -21,7 +21,7 @@ export const SPHERE_CONFIG = {
   focusedScale: 3,
   
   // Opacity of non-focused photos when one is selected
-  unfocusedOpacity: 0.3,
+  unfocusedOpacity: 0.7,
 };
 
 // Placeholder image generator - using picsum with .jpg extension for better compatibility
