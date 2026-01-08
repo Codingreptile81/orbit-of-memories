@@ -1,5 +1,5 @@
-import { useRef, useState, useMemo, useEffect } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
+import { useRef, useState, useEffect } from 'react';
+import { useFrame, useThree, useLoader } from '@react-three/fiber';
 import { Mesh, Vector3, MathUtils, TextureLoader, Texture } from 'three';
 import { SPHERE_CONFIG } from './config';
 
@@ -23,29 +23,34 @@ const PhotoMesh = ({
   const meshRef = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);
   const [texture, setTexture] = useState<Texture | null>(null);
+  const [loaded, setLoaded] = useState(false);
   const { camera } = useThree();
   
-  // Load texture with error handling
+  // Load texture manually with proper error handling
   useEffect(() => {
     const loader = new TextureLoader();
+    let isMounted = true;
+    
     loader.load(
       imageUrl,
-      (loadedTexture) => {
-        setTexture(loadedTexture);
+      (tex) => {
+        if (isMounted) {
+          setTexture(tex);
+          setLoaded(true);
+        }
       },
       undefined,
-      (error) => {
-        console.warn(`Failed to load image ${index}, using fallback`);
-        setTexture(null);
+      () => {
+        if (isMounted) {
+          setLoaded(true); // Still mark as loaded to show fallback
+        }
       }
     );
     
     return () => {
-      if (texture) {
-        texture.dispose();
-      }
+      isMounted = false;
     };
-  }, [imageUrl, index]);
+  }, [imageUrl]);
   
   // Target opacity based on focus state
   const targetOpacity = anyFocused ? SPHERE_CONFIG.unfocusedOpacity : 1;
