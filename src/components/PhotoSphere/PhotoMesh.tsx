@@ -64,7 +64,7 @@ const PhotoMesh = ({
         document.body.style.cursor = 'auto';
       }}
     >
-      <circleGeometry args={[SPHERE_CONFIG.photoSize / 2, 64]} />
+      <sphereGeometry args={[SPHERE_CONFIG.photoSize / 2, 64, 64]} />
       <meshBasicMaterial map={texture} transparent opacity={1} />
     </mesh>
   );
