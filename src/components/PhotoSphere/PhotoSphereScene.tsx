@@ -1,5 +1,5 @@
-import { useRef, useState, useMemo, Suspense, useEffect } from 'react';
-import { Canvas, useThree } from '@react-three/fiber';
+import { useRef, useState, useMemo, useEffect } from 'react';
+import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { Vector3, Group } from 'three';
 import PhotoMesh from './PhotoMesh';
@@ -47,11 +47,6 @@ const PhotoSphereContent = ({ focusedIndex, onPhotoClick }: PhotoSphereContentPr
     []
   );
 
-  // Calculate focus position (in front of camera)
-  const focusPosition = useMemo(() => {
-    return new Vector3(0, 0, 2);
-  }, []);
-
   // Disable controls when photo is focused
   useEffect(() => {
     if (controlsRef.current) {
@@ -81,7 +76,6 @@ const PhotoSphereContent = ({ focusedIndex, onPhotoClick }: PhotoSphereContentPr
             isFocused={focusedIndex === index}
             anyFocused={focusedIndex !== null}
             onClick={() => onPhotoClick(focusedIndex === index ? null : index)}
-            focusPosition={focusPosition}
           />
         ))}
       </group>
@@ -89,8 +83,78 @@ const PhotoSphereContent = ({ focusedIndex, onPhotoClick }: PhotoSphereContentPr
   );
 };
 
+interface FocusedPhotoOverlayProps {
+  imageUrl: string;
+  onClose: () => void;
+}
+
+const FocusedPhotoOverlay = ({ imageUrl, onClose }: FocusedPhotoOverlayProps) => {
+  const [isVisible, setIsVisible] = useState(false);
+  
+  useEffect(() => {
+    // Trigger animation after mount
+    requestAnimationFrame(() => setIsVisible(true));
+  }, []);
+  
+  return (
+    <div 
+      className="absolute inset-0 flex items-center justify-center z-10 cursor-pointer"
+      onClick={onClose}
+    >
+      {/* Blurred backdrop */}
+      <div 
+        className={`absolute inset-0 bg-black/30 backdrop-blur-md transition-opacity duration-500 ${
+          isVisible ? 'opacity-100' : 'opacity-0'
+        }`}
+      />
+      
+      {/* Focused photo */}
+      <div 
+        className={`relative transition-all duration-500 ease-out ${
+          isVisible 
+            ? 'scale-100 opacity-100' 
+            : 'scale-75 opacity-0'
+        }`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <img
+          src={imageUrl}
+          alt="Focused photo"
+          className="max-w-[80vw] max-h-[70vh] w-auto h-auto rounded-3xl shadow-2xl object-cover"
+          style={{
+            minWidth: '300px',
+            minHeight: '300px',
+          }}
+        />
+        
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute -top-4 -right-4 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-gray-600 hover:text-gray-900 hover:scale-110 transition-all"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        
+        {/* Caption placeholder - ready for future use */}
+        <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 text-center">
+          {/* Caption will go here when implemented */}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const PhotoSphereScene = () => {
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+  
+  // Generate placeholder image URLs
+  const photoUrls = useMemo(
+    () => Array.from({ length: SPHERE_CONFIG.photoCount }, (_, i) => getPlaceholderImage(i)),
+    []
+  );
 
   const handleBackgroundClick = () => {
     if (focusedIndex !== null) {
@@ -99,7 +163,7 @@ const PhotoSphereScene = () => {
   };
 
   return (
-    <div className="w-full h-screen bg-white">
+    <div className="w-full h-screen bg-white relative overflow-hidden">
       <Canvas
         camera={{ position: [0, 0, 10], fov: 60 }}
         onPointerMissed={handleBackgroundClick}
@@ -112,11 +176,12 @@ const PhotoSphereScene = () => {
         />
       </Canvas>
       
-      {/* Optional: Caption overlay - ready for future use */}
+      {/* Focused photo overlay with blur and rounded corners */}
       {focusedIndex !== null && (
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 pointer-events-none">
-          {/* Caption will go here when implemented */}
-        </div>
+        <FocusedPhotoOverlay
+          imageUrl={photoUrls[focusedIndex]}
+          onClose={() => setFocusedIndex(null)}
+        />
       )}
     </div>
   );
