@@ -24,15 +24,18 @@ export const SPHERE_CONFIG = {
   unfocusedOpacity: 0.7,
 };
 
-// Placeholder image generator - using picsum with .jpg extension for better compatibility
+// Local photos from the photos folder
+const localPhotos = [
+  '/photos/photo1.jpg',
+  '/photos/photo2.jpg',
+  '/photos/photo3.jpg',
+  '/photos/photo4.jpg',
+  '/photos/photo5.jpg',
+  '/photos/photo6.jpg',
+  '/photos/photo7.jpg',
+  '/photos/photo8.jpg',
+];
+
 export const getPlaceholderImage = (index: number): string => {
-  // Using picsum.photos with specific image IDs for reliability
-  const imageIds = [
-    10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-    20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
-    30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
-    40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
-  ];
-  const id = imageIds[index % imageIds.length];
-  return `https://picsum.photos/id/${id}/300/300`;
+  return localPhotos[index % localPhotos.length];
 };
