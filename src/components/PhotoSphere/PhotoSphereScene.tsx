@@ -3,7 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { Vector3, Group } from 'three';
 import PhotoMesh from './PhotoMesh';
-import { SPHERE_CONFIG, getPlaceholderImage } from './config';
+import { SPHERE_CONFIG, getPlaceholderImage, getPhotoCount } from './config';
 import backgroundImage from '@/assets/background.webp';
 
 // Generate evenly distributed points on a sphere using golden spiral
@@ -36,16 +36,18 @@ const PhotoSphereContent = ({ focusedIndex, onPhotoClick }: PhotoSphereContentPr
   const groupRef = useRef<Group>(null);
   const controlsRef = useRef<any>(null);
 
+  const photoCount = getPhotoCount();
+
   // Generate photo positions on sphere
   const photoPositions = useMemo(
-    () => generateSpherePoints(SPHERE_CONFIG.photoCount, SPHERE_CONFIG.sphereRadius),
-    []
+    () => generateSpherePoints(photoCount, SPHERE_CONFIG.sphereRadius),
+    [photoCount]
   );
 
   // Generate placeholder image URLs
   const photoUrls = useMemo(
-    () => Array.from({ length: SPHERE_CONFIG.photoCount }, (_, i) => getPlaceholderImage(i)),
-    []
+    () => Array.from({ length: photoCount }, (_, i) => getPlaceholderImage(i)),
+    [photoCount]
   );
 
   // Disable controls when photo is focused
@@ -152,11 +154,12 @@ const FocusedPhotoOverlay = ({ imageUrl, onClose }: FocusedPhotoOverlayProps) =>
 
 const PhotoSphereScene = () => {
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+  const photoCount = getPhotoCount();
   
   // Generate placeholder image URLs
   const photoUrls = useMemo(
-    () => Array.from({ length: SPHERE_CONFIG.photoCount }, (_, i) => getPlaceholderImage(i)),
-    []
+    () => Array.from({ length: photoCount }, (_, i) => getPlaceholderImage(i)),
+    [photoCount]
   );
 
   const handleBackgroundClick = () => {
