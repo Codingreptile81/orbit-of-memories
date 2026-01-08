@@ -175,7 +175,9 @@ const PhotoSphereScene = () => {
         onPointerMissed={handleBackgroundClick}
         style={{ background: 'transparent' }}
       >
-        <ambientLight intensity={1} />
+        <ambientLight intensity={0.6} />
+        <pointLight position={[10, 10, 10]} intensity={1} />
+        <pointLight position={[-10, -10, -10]} intensity={0.5} />
         <PhotoSphereContent
           focusedIndex={focusedIndex}
           onPhotoClick={setFocusedIndex}
