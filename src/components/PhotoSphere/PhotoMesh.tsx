@@ -30,11 +30,14 @@ const PhotoMesh = ({
   // Target opacity based on focus state
   const targetOpacity = anyFocused ? SPHERE_CONFIG.unfocusedOpacity : 1;
   
-  // Animate opacity only (photos maintain fixed orientation)
+  // Make photos always face camera (billboard effect) and animate opacity
   useFrame((state, delta) => {
     if (!meshRef.current) return;
     
     const speed = 5 * delta;
+    
+    // Make photo always face camera so it's visible from all angles
+    meshRef.current.lookAt(camera.position);
     
     // Update material opacity
     const material = meshRef.current.material as any;
