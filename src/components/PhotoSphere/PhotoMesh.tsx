@@ -10,7 +10,6 @@ interface PhotoMeshProps {
   isFocused: boolean;
   anyFocused: boolean;
   onClick: () => void;
-  focusPosition: Vector3;
 }
 
 const PhotoMesh = ({
@@ -20,10 +19,8 @@ const PhotoMesh = ({
   isFocused,
   anyFocused,
   onClick,
-  focusPosition,
 }: PhotoMeshProps) => {
-  const circleMeshRef = useRef<Mesh>(null);
-  const rectMeshRef = useRef<Mesh>(null);
+  const meshRef = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);
   const [texture, setTexture] = useState<Texture | null>(null);
   const { camera } = useThree();
@@ -50,54 +47,22 @@ const PhotoMesh = ({
     };
   }, [imageUrl, index]);
   
-  // Store original position
-  const originalPosition = useMemo(() => position.clone(), [position]);
+  // Target opacity based on focus state
+  const targetOpacity = anyFocused ? SPHERE_CONFIG.unfocusedOpacity : 1;
   
-  // Target values for animation
-  const targetPosition = isFocused ? focusPosition : originalPosition;
-  const targetScale = isFocused ? SPHERE_CONFIG.focusedScale : 1;
-  const targetOpacity = anyFocused && !isFocused ? SPHERE_CONFIG.unfocusedOpacity : 1;
-  
-  // Rectangle dimensions for focused view (4:3 aspect ratio)
-  const rectWidth = SPHERE_CONFIG.photoSize * 1.5;
-  const rectHeight = SPHERE_CONFIG.photoSize * 1.1;
-  
-  // Animate both meshes
+  // Animate opacity and face camera
   useFrame((state, delta) => {
+    if (!meshRef.current) return;
+    
     const speed = 5 * delta;
     
-    // Animate circle mesh (unfocused state)
-    if (circleMeshRef.current) {
-      if (!isFocused) {
-        circleMeshRef.current.position.lerp(targetPosition, speed);
-        circleMeshRef.current.lookAt(camera.position);
-      }
-      
-      const currentScale = circleMeshRef.current.scale.x;
-      const circleTargetScale = isFocused ? 0 : 1;
-      const newScale = MathUtils.lerp(currentScale, circleTargetScale, speed);
-      circleMeshRef.current.scale.setScalar(Math.max(0.01, newScale));
-      
-      const material = circleMeshRef.current.material as any;
-      if (material.opacity !== undefined) {
-        material.opacity = MathUtils.lerp(material.opacity, isFocused ? 0 : targetOpacity, speed);
-      }
-    }
+    // Make photo face camera
+    meshRef.current.lookAt(camera.position);
     
-    // Animate rectangle mesh (focused state)
-    if (rectMeshRef.current) {
-      rectMeshRef.current.position.lerp(targetPosition, speed);
-      rectMeshRef.current.lookAt(camera.position);
-      
-      const currentScale = rectMeshRef.current.scale.x;
-      const rectTargetScale = isFocused ? targetScale : 0;
-      const newScale = MathUtils.lerp(currentScale, rectTargetScale, speed);
-      rectMeshRef.current.scale.setScalar(Math.max(0.01, newScale));
-      
-      const material = rectMeshRef.current.material as any;
-      if (material.opacity !== undefined) {
-        material.opacity = MathUtils.lerp(material.opacity, isFocused ? 1 : 0, speed);
-      }
+    // Update material opacity
+    const material = meshRef.current.material as any;
+    if (material.opacity !== undefined) {
+      material.opacity = MathUtils.lerp(material.opacity, targetOpacity, speed);
     }
   });
 
@@ -105,51 +70,30 @@ const PhotoMesh = ({
   const fallbackColor = `hsl(${(index * 37) % 360}, 70%, 80%)`;
   
   return (
-    <group>
-      {/* Circular photo (visible when not focused) */}
-      <mesh
-        ref={circleMeshRef}
-        position={position.clone()}
-        onClick={(e) => {
-          e.stopPropagation();
-          onClick();
-        }}
-        onPointerOver={(e) => {
-          e.stopPropagation();
-          setHovered(true);
-          document.body.style.cursor = 'pointer';
-        }}
-        onPointerOut={() => {
-          setHovered(false);
-          document.body.style.cursor = 'auto';
-        }}
-      >
-        <circleGeometry args={[SPHERE_CONFIG.photoSize / 2, 64]} />
-        {texture ? (
-          <meshBasicMaterial map={texture} transparent opacity={1} />
-        ) : (
-          <meshBasicMaterial color={fallbackColor} transparent opacity={1} />
-        )}
-      </mesh>
-      
-      {/* Rectangular photo (visible when focused) */}
-      <mesh
-        ref={rectMeshRef}
-        position={position.clone()}
-        scale={0.01}
-        onClick={(e) => {
-          e.stopPropagation();
-          onClick();
-        }}
-      >
-        <planeGeometry args={[rectWidth, rectHeight]} />
-        {texture ? (
-          <meshBasicMaterial map={texture} transparent opacity={0} />
-        ) : (
-          <meshBasicMaterial color={fallbackColor} transparent opacity={0} />
-        )}
-      </mesh>
-    </group>
+    <mesh
+      ref={meshRef}
+      position={position.clone()}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
+      onPointerOver={(e) => {
+        e.stopPropagation();
+        setHovered(true);
+        document.body.style.cursor = 'pointer';
+      }}
+      onPointerOut={() => {
+        setHovered(false);
+        document.body.style.cursor = 'auto';
+      }}
+    >
+      <circleGeometry args={[SPHERE_CONFIG.photoSize / 2, 64]} />
+      {texture ? (
+        <meshBasicMaterial map={texture} transparent opacity={1} />
+      ) : (
+        <meshBasicMaterial color={fallbackColor} transparent opacity={1} />
+      )}
+    </mesh>
   );
 };
 
