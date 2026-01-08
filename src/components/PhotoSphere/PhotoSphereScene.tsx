@@ -3,6 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { Vector3, Group } from 'three';
 import PhotoMesh from './PhotoMesh';
+import Confetti from './Confetti';
 import { SPHERE_CONFIG, getPlaceholderImage, getPhotoCount, getPhotoSize } from './config';
 import backgroundImage from '@/assets/background.webp';
 
@@ -174,6 +175,7 @@ const PhotoSphereScene = () => {
       className="w-full h-screen relative overflow-hidden bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
+      <Confetti />
       <Canvas
         camera={{ position: [0, 0, 10], fov: 60 }}
         onPointerMissed={handleBackgroundClick}
