@@ -1,5 +1,5 @@
 import { useRef, useState, useMemo, Suspense, useEffect } from 'react';
-import { Canvas, useThree, useFrame } from '@react-three/fiber';
+import { Canvas, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { Vector3, Group } from 'three';
 import PhotoMesh from './PhotoMesh';
@@ -26,15 +26,14 @@ const generateSpherePoints = (count: number, radius: number): Vector3[] => {
   return points;
 };
 
-interface PhotoSphereProps {
+interface PhotoSphereContentProps {
   focusedIndex: number | null;
   onPhotoClick: (index: number | null) => void;
 }
 
-const PhotoSphere = ({ focusedIndex, onPhotoClick }: PhotoSphereProps) => {
+const PhotoSphereContent = ({ focusedIndex, onPhotoClick }: PhotoSphereContentProps) => {
   const groupRef = useRef<Group>(null);
   const controlsRef = useRef<any>(null);
-  const { camera } = useThree();
 
   // Generate photo positions on sphere
   const photoPositions = useMemo(
@@ -60,15 +59,6 @@ const PhotoSphere = ({ focusedIndex, onPhotoClick }: PhotoSphereProps) => {
     }
   }, [focusedIndex]);
 
-  // Make photos face camera
-  useFrame(() => {
-    if (groupRef.current && focusedIndex === null) {
-      groupRef.current.children.forEach((child) => {
-        child.lookAt(camera.position);
-      });
-    }
-  });
-
   return (
     <>
       <OrbitControls
@@ -83,17 +73,16 @@ const PhotoSphere = ({ focusedIndex, onPhotoClick }: PhotoSphereProps) => {
       
       <group ref={groupRef}>
         {photoPositions.map((position, index) => (
-          <Suspense key={index} fallback={null}>
-            <PhotoMesh
-              imageUrl={photoUrls[index]}
-              position={position}
-              index={index}
-              isFocused={focusedIndex === index}
-              anyFocused={focusedIndex !== null}
-              onClick={() => onPhotoClick(focusedIndex === index ? null : index)}
-              focusPosition={focusPosition}
-            />
-          </Suspense>
+          <PhotoMesh
+            key={index}
+            imageUrl={photoUrls[index]}
+            position={position}
+            index={index}
+            isFocused={focusedIndex === index}
+            anyFocused={focusedIndex !== null}
+            onClick={() => onPhotoClick(focusedIndex === index ? null : index)}
+            focusPosition={focusPosition}
+          />
         ))}
       </group>
     </>
@@ -117,12 +106,10 @@ const PhotoSphereScene = () => {
       >
         <color attach="background" args={['#ffffff']} />
         <ambientLight intensity={1} />
-        <Suspense fallback={null}>
-          <PhotoSphere
-            focusedIndex={focusedIndex}
-            onPhotoClick={setFocusedIndex}
-          />
-        </Suspense>
+        <PhotoSphereContent
+          focusedIndex={focusedIndex}
+          onPhotoClick={setFocusedIndex}
+        />
       </Canvas>
       
       {/* Optional: Caption overlay - ready for future use */}

@@ -24,8 +24,15 @@ export const SPHERE_CONFIG = {
   unfocusedOpacity: 0.3,
 };
 
-// Placeholder image generator - uses Lorem Picsum for beautiful placeholders
+// Placeholder image generator - using picsum with .jpg extension for better compatibility
 export const getPlaceholderImage = (index: number): string => {
-  // Using Lorem Picsum with different seeds for variety
-  return `https://picsum.photos/seed/${index + 100}/300/300`;
+  // Using picsum.photos with specific image IDs for reliability
+  const imageIds = [
+    10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+    30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+    40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
+  ];
+  const id = imageIds[index % imageIds.length];
+  return `https://picsum.photos/id/${id}/300/300`;
 };
