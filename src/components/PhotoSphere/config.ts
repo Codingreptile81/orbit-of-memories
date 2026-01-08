@@ -24,9 +24,9 @@ export const SPHERE_CONFIG = {
   // Radius of the invisible sphere
   sphereRadius: 5,
   
-  // Size range for photos (varying sizes)
-  photoSizeMin: 0.5,
-  photoSizeMax: 1.1,
+  // Size range for photos (varying sizes - subtle difference)
+  photoSizeMin: 0.65,
+  photoSizeMax: 0.95,
   
   // Damping factor for rotation momentum (higher = more friction)
   rotationDamping: 0.05,
