@@ -61,23 +61,12 @@ const PhotoMesh = ({
       }}
     >
       {/* Photo circle */}
-      <mesh position={[0, 0, 0.005]}>
+      <mesh>
         <circleGeometry args={[radius, 64]} />
         <meshBasicMaterial 
           map={texture} 
           transparent 
           opacity={targetOpacity}
-        />
-      </mesh>
-      
-      {/* Simple golden frame ring */}
-      <mesh position={[0, 0, 0]}>
-        <ringGeometry args={[radius, radius + frameWidth, 64]} />
-        <meshStandardMaterial 
-          color="#d4af37" 
-          metalness={0.85} 
-          roughness={0.15}
-          side={DoubleSide}
         />
       </mesh>
     </group>
