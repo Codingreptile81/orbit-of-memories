@@ -46,9 +46,13 @@ const PhotoMesh = ({
     }
   });
   
+  const radius = SPHERE_CONFIG.photoSize / 2;
+  const frameThickness = 0.03;
+  const frameDepth = 0.08;
+  
   return (
-    <mesh
-      ref={meshRef}
+    <group
+      ref={meshRef as any}
       position={position.clone()}
       onClick={(e) => {
         e.stopPropagation();
@@ -64,9 +68,39 @@ const PhotoMesh = ({
         document.body.style.cursor = 'auto';
       }}
     >
-      <sphereGeometry args={[SPHERE_CONFIG.photoSize / 2, 64, 64]} />
-      <meshBasicMaterial map={texture} transparent opacity={1} />
-    </mesh>
+      {/* Photo face - flat circle so image isn't distorted */}
+      <mesh position={[0, 0, frameDepth / 2 + 0.001]}>
+        <circleGeometry args={[radius, 64]} />
+        <meshBasicMaterial map={texture} transparent opacity={1} />
+      </mesh>
+      
+      {/* Back face */}
+      <mesh position={[0, 0, -frameDepth / 2 - 0.001]} rotation={[0, Math.PI, 0]}>
+        <circleGeometry args={[radius, 64]} />
+        <meshBasicMaterial color="#1a1a2e" />
+      </mesh>
+      
+      {/* 3D frame ring */}
+      <mesh>
+        <torusGeometry args={[radius, frameThickness, 16, 64]} />
+        <meshStandardMaterial 
+          color="#c9a96e" 
+          metalness={0.8} 
+          roughness={0.2}
+        />
+      </mesh>
+      
+      {/* Depth cylinder edge */}
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[radius + frameThickness, radius + frameThickness, frameDepth, 64, 1, true]} />
+        <meshStandardMaterial 
+          color="#8b7355" 
+          metalness={0.6} 
+          roughness={0.3}
+          side={2}
+        />
+      </mesh>
+    </group>
   );
 };
 
