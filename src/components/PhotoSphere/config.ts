@@ -24,16 +24,25 @@ export const SPHERE_CONFIG = {
   unfocusedOpacity: 0.7,
 };
 
-// Local photos from the photos folder
+// Import photos from src/assets for reliable bundling
+import photo1 from '@/assets/photos/photo1.jpg';
+import photo2 from '@/assets/photos/photo2.jpg';
+import photo3 from '@/assets/photos/photo3.jpg';
+import photo4 from '@/assets/photos/photo4.jpg';
+import photo5 from '@/assets/photos/photo5.jpg';
+import photo6 from '@/assets/photos/photo6.jpg';
+import photo7 from '@/assets/photos/photo7.jpg';
+import photo8 from '@/assets/photos/photo8.jpg';
+
 const localPhotos = [
-  '/photos/photo1.jpg',
-  '/photos/photo2.jpg',
-  '/photos/photo3.jpg',
-  '/photos/photo4.jpg',
-  '/photos/photo5.jpg',
-  '/photos/photo6.jpg',
-  '/photos/photo7.jpg',
-  '/photos/photo8.jpg',
+  photo1,
+  photo2,
+  photo3,
+  photo4,
+  photo5,
+  photo6,
+  photo7,
+  photo8,
 ];
 
 export const getPlaceholderImage = (index: number): string => {
