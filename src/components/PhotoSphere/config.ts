@@ -24,8 +24,9 @@ export const SPHERE_CONFIG = {
   // Radius of the invisible sphere
   sphereRadius: 5,
   
-  // Size of each circular photo
-  photoSize: 0.8,
+  // Size range for photos (varying sizes)
+  photoSizeMin: 0.5,
+  photoSizeMax: 1.1,
   
   // Damping factor for rotation momentum (higher = more friction)
   rotationDamping: 0.05,
@@ -38,6 +39,13 @@ export const SPHERE_CONFIG = {
   
   // Opacity of non-focused photos when one is selected
   unfocusedOpacity: 0.7,
+};
+
+// Seeded random for consistent sizes across refreshes
+export const getPhotoSize = (index: number): number => {
+  const seed = (index * 9301 + 49297) % 233280;
+  const random = seed / 233280;
+  return SPHERE_CONFIG.photoSizeMin + random * (SPHERE_CONFIG.photoSizeMax - SPHERE_CONFIG.photoSizeMin);
 };
 
 export const getPlaceholderImage = (index: number): string => {

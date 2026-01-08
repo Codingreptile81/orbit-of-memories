@@ -3,7 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { Vector3, Group } from 'three';
 import PhotoMesh from './PhotoMesh';
-import { SPHERE_CONFIG, getPlaceholderImage, getPhotoCount } from './config';
+import { SPHERE_CONFIG, getPlaceholderImage, getPhotoCount, getPhotoSize } from './config';
 import backgroundImage from '@/assets/background.webp';
 
 // Generate evenly distributed points on a sphere using golden spiral
@@ -77,6 +77,7 @@ const PhotoSphereContent = ({ focusedIndex, onPhotoClick }: PhotoSphereContentPr
               imageUrl={photoUrls[index]}
               position={position}
               index={index}
+              size={getPhotoSize(index)}
               isFocused={focusedIndex === index}
               anyFocused={focusedIndex !== null}
               onClick={() => onPhotoClick(focusedIndex === index ? null : index)}
