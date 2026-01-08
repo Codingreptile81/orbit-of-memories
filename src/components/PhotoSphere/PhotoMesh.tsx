@@ -30,14 +30,11 @@ const PhotoMesh = ({
   // Target opacity based on focus state
   const targetOpacity = anyFocused ? SPHERE_CONFIG.unfocusedOpacity : 1;
   
-  // Animate opacity and face camera
+  // Animate opacity only (photos maintain fixed orientation)
   useFrame((state, delta) => {
     if (!meshRef.current) return;
     
     const speed = 5 * delta;
-    
-    // Make photo face camera
-    meshRef.current.lookAt(camera.position);
     
     // Update material opacity
     const material = meshRef.current.material as any;
