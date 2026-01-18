@@ -68,6 +68,8 @@ const PhotoSphereContent = ({ focusedIndex, onPhotoClick }: PhotoSphereContentPr
         enableDamping={true}
         minDistance={3}
         maxDistance={15}
+        autoRotate={true}
+        autoRotateSpeed={0.3}
       />
       
       <Suspense fallback={null}>
