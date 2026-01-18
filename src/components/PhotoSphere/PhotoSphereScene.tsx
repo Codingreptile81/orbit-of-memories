@@ -1,5 +1,5 @@
 import { useRef, useState, useMemo, useEffect, Suspense } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { Vector3, Group } from 'three';
 import PhotoMesh from './PhotoMesh';
@@ -58,6 +58,15 @@ const PhotoSphereContent = ({ focusedIndex, onPhotoClick }: PhotoSphereContentPr
     }
   }, [focusedIndex]);
 
+  // Auto-rotate on all 3 axes
+  useFrame((_, delta) => {
+    if (groupRef.current && focusedIndex === null) {
+      groupRef.current.rotation.x += delta * 0.08;
+      groupRef.current.rotation.y += delta * 0.12;
+      groupRef.current.rotation.z += delta * 0.05;
+    }
+  });
+
   return (
     <>
       <OrbitControls
@@ -68,8 +77,6 @@ const PhotoSphereContent = ({ focusedIndex, onPhotoClick }: PhotoSphereContentPr
         enableDamping={true}
         minDistance={3}
         maxDistance={15}
-        autoRotate={true}
-        autoRotateSpeed={0.3}
       />
       
       <Suspense fallback={null}>
