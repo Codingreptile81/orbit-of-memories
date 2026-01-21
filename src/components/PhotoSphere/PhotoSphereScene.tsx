@@ -5,7 +5,6 @@ import { Vector3, Group } from 'three';
 import PhotoMesh from './PhotoMesh';
 import Confetti from './Confetti';
 import { SPHERE_CONFIG, getPlaceholderImage, getPhotoCount, getPhotoSize } from './config';
-import backgroundImage from '@/assets/background.webp';
 
 // Generate evenly distributed points on a sphere using golden spiral
 const generateSpherePoints = (count: number, radius: number): Vector3[] => {
@@ -181,8 +180,8 @@ const PhotoSphereScene = () => {
 
   return (
     <div 
-      className="w-full h-screen relative overflow-hidden bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: `url(${backgroundImage})` }}
+      className="w-full h-screen relative overflow-hidden"
+      style={{ background: 'linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 30%, #4a2c7a 60%, #1a0a2e 100%)' }}
     >
       <Confetti />
       <Canvas
