@@ -180,7 +180,7 @@ const PhotoSphereScene = () => {
 
   return (
     <div 
-      className="w-full h-screen relative overflow-hidden bg-gradient-to-br from-[#1a0a2e] via-[#4a2c7a] to-[#1a0a2e]"
+      className="w-full h-screen relative overflow-hidden bg-gradient-to-br from-[#d4af37] via-[#1a1410] to-[#c9a227]"
     >
       <Confetti />
       <Canvas
